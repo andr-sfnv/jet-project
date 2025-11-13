@@ -1,0 +1,19 @@
+# python
+__pycache__/
+
+# virtual environment
+.venv
+
+# ide
+.vscode/
+.cursor/
+.DS_Store
+
+# env
+.env
+
+# other
+.cursorrules
+CASE_STUDY_BLUEPRINT.md
+case_study_requirements.txt
+Data & Analytics Case Study - Data Engineer (Data Ingestion and Modeling) (1).pdf
