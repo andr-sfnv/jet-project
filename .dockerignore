@@ -1,12 +1,21 @@
-# python
+# Python
 __pycache__/
+*.py[cod]
 
-# virtual environment
-.venv
+# Virtual environment
+.venv/
 
-# ide
+# IDE
 .vscode/
+.cursor/
 .DS_Store
 
-# env
+# Environment
 .env
+
+# Testing
+ingestion/tests/.pytest_cache/
+ingestion/tests/.coverage
+
+# Project-specific
+temp/
