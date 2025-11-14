@@ -14,8 +14,7 @@ __pycache__/
 .env
 
 # Testing
-ingestion/tests/.pytest_cache/
-ingestion/tests/.coverage
+ingestion/tests/
 
 # Project-specific
 temp/
