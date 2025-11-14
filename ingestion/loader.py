@@ -3,7 +3,7 @@
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 
 import psycopg
@@ -87,7 +87,7 @@ class XKCDLoader:
             raise RuntimeError("Not connected to database")
 
         load_id = uuid.uuid4()
-        load_ts = datetime.now(datetime.UTC)
+        load_ts = datetime.now(timezone.utc)
 
         for i in range(0, len(comics), batch_size):
             batch = comics[i : i + batch_size]
