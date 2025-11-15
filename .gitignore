@@ -29,5 +29,8 @@ dbt/logs/
 dbt/.user.yml
 dbt/profiles.yml
 
+# Airflow
+airflow/logs/
+
 # Project-specific
 temp/

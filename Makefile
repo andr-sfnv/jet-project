@@ -16,11 +16,14 @@ help:
 	@echo "  make lint-python    - Lint Python code only"
 	@echo "  make lint-sql       - Lint SQL/dbt code only"
 	@echo "  make format         - Format Python code"
+	@echo "  make airflow-up     - Start Airflow services"
+	@echo "  make airflow-down   - Stop Airflow services"
+	@echo "  make airflow-logs   - View Airflow logs"
 	@echo "  make clean          - Stop and remove database volumes"
 
 setup:
 	@echo "Installing Python dependencies..."
-	uv pip install -e .
+	uv pip install -e ".[dev]"
 	@echo "Starting database..."
 	docker compose up -d
 	@echo "Waiting for database to be ready..."
@@ -81,6 +84,15 @@ dbt-test:
 
 dbt-build:
 	cd dbt && uv run dbt build
+
+airflow-up:
+	docker compose up -d airflow-webserver airflow-scheduler
+
+airflow-down:
+	docker compose stop airflow-webserver airflow-scheduler
+
+airflow-logs:
+	docker compose logs -f airflow-webserver airflow-scheduler
 
 clean:
 	docker compose down -v
