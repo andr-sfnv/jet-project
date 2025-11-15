@@ -37,7 +37,7 @@ class XKCDLoader:
         self.conn: psycopg.Connection | None = None
 
     def connect(self) -> None:
-        """Establish database connection and create tables if needed."""
+        """Establish database connection."""
         if self.conn is not None:
             logger.warning("Already connected, skipping connection")
             return
@@ -50,26 +50,6 @@ class XKCDLoader:
             user=self.config.warehouse_user,
             password=self.config.warehouse_password,
         )
-
-        with self.conn.cursor() as cur:
-            cur.execute("create schema if not exists raw")
-            cur.execute(
-                """
-                create table if not exists raw.xkcd_comics (
-                    comic_id integer primary key,
-                    raw_json jsonb not null,
-                    load_ts timestamp not null default current_timestamp,
-                    load_id uuid not null
-                )
-                """
-            )
-            cur.execute(
-                "create index if not exists idx_xkcd_comics_load_ts on raw.xkcd_comics(load_ts)"
-            )
-            cur.execute(
-                "create index if not exists idx_xkcd_comics_load_id on raw.xkcd_comics(load_id)"
-            )
-            self.conn.commit()
 
         logger.info("Database connection established")
 
