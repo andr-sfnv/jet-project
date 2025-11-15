@@ -2,54 +2,49 @@
 
 from datetime import datetime, timedelta
 
-from airflow import DAG
 from airflow.operators.bash import BashOperator
-from airflow.operators.python import PythonOperator
-
-from ingestion.run_ingestion import main as ingest_main
+from airflow.sdk import dag, task
 
 
-def ingest_xkcd_data():
-    """Run XKCD ingestion."""
-    ingest_main()
-
-
-default_args = {
-    "owner": "data-engineering",
-    "depends_on_past": False,
-    "start_date": datetime(2025, 1, 1),
-    "email_on_failure": False,
-    "email_on_retry": False,
-    "retries": 3,
-    "retry_delay": timedelta(minutes=5),
-}
-
-dag = DAG(
-    "xkcd_etl_pipeline",
-    default_args=default_args,
-    description="XKCD comics ETL pipeline",
+@dag(
+    dag_id="xkcd_pipeline",
+    description="XKCD comics pipeline",
     schedule="0 12 * * 1,3,5",
+    start_date=datetime(2025, 1, 1),
     catchup=False,
-    tags=["xkcd", "etl"],
+    tags=["xkcd"],
+    default_args={
+        "owner": "data-engineering",
+        "depends_on_past": False,
+        "email_on_failure": False,
+        "email_on_retry": False,
+        "retries": 3,
+        "retry_delay": timedelta(minutes=5),
+    },
 )
+def xkcd_pipeline():
+    """XKCD pipeline DAG."""
 
-ingest_task = PythonOperator(
-    task_id="ingest_xkcd_comics",
-    python_callable=ingest_xkcd_data,
-    dag=dag,
-)
+    @task
+    def ingest_xkcd_comics():
+        """Run XKCD ingestion."""
+        from ingestion.run_ingestion import main
 
-dbt_run_task = BashOperator(
-    task_id="dbt_run",
-    bash_command="cp /opt/airflow/dbt/profiles.yml.airflow /opt/airflow/dbt/profiles.yml && cd /opt/airflow/dbt && dbt run",
-    dag=dag,
-)
+        main()
 
-dbt_test_task = BashOperator(
-    task_id="dbt_test",
-    bash_command="cd /opt/airflow/dbt && dbt test",
-    dag=dag,
-)
+    dbt_run_task = BashOperator(
+        task_id="dbt_run",
+        bash_command="cd /opt/airflow/dbt && dbt run --target airflow",
+    )
 
-ingest_task >> dbt_run_task >> dbt_test_task
+    dbt_test_task = BashOperator(
+        task_id="dbt_test",
+        bash_command="cd /opt/airflow/dbt && dbt test --target airflow",
+    )
+
+    ingest_task = ingest_xkcd_comics()
+    ingest_task >> dbt_run_task >> dbt_test_task
+
+
+xkcd_pipeline()
 
