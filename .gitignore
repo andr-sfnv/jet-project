@@ -22,5 +22,12 @@ uv.lock
 ingestion/tests/.pytest_cache/
 ingestion/tests/.coverage
 
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/.user.yml
+dbt/profiles.yml
+
 # Project-specific
 temp/
