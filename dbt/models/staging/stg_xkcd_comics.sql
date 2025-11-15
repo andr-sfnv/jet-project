@@ -34,13 +34,10 @@ final as (
         img_url,
         transcript,
         make_date(
-            (publish_year_str)::integer,
-            (publish_month_str)::integer,
-            (publish_day_str)::integer
+            publish_year_str::integer,
+            publish_month_str::integer,
+            publish_day_str::integer
         ) as publish_date,
-        (publish_year_str)::integer as publish_year,
-        (publish_month_str)::integer as publish_month,
-        (publish_day_str)::integer as publish_day,
         link,
         news,
         load_ts,

@@ -18,7 +18,7 @@ models:
   xkcd_analytics:
     staging:
       +materialized: view
-      +schema: staging
+      +schema: "{{ target.schema }}_staging"
     marts:
       +materialized: table
-      +schema: marts
+      +schema: "{{ target.schema }}_marts"

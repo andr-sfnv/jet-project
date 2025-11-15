@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: dim_comic
+    description: "Comic dimension table with title length for cost calculation"
+    columns:
+      - name: comic_id
+        description: "Unique comic id"
+        tests:
+          - unique
+          - not_null
+      
+      - name: title
+        description: "Comic title"
+        tests:
+          - not_null
+      
+      - name: safe_title
+        description: "Title without special characters"
+      
+      - name: alt_text
+        description: "Alternative text for the comic image (hover text)"
+      
+      - name: img_url
+        description: "URL to the comic image"
+        tests:
+          - not_null
+      
+      - name: transcript
+        description: "Comic text transcript"
+      
+      - name: link
+        description: "Optional related link"
+      
+      - name: publish_date
+        description: "Publication date"
+        tests:
+          - not_null
+      
+      - name: title_length
+        description: "Length of title (for cost calculation: length * €5)"
+
+  - name: fct_comic_metrics
+    description: "Fact table with calculated metrics: views, cost_euros, customer_review_score"
+    columns:
+      - name: comic_id
+        description: "Primary key and foreign key to dim_comic"
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_comic')
+                field: comic_id
+      
+      - name: views
+        description: "Number of views per comic"
+        tests:
+          - not_null
+      
+      - name: cost_euros
+        description: "Cost to create comic (title_length * €5)"
+        tests:
+          - not_null
+      
+      - name: customer_review_score
+        description: "Customer review score (random 1.0-10.0)"
+        tests:
+          - not_null

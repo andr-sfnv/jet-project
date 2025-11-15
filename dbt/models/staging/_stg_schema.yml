@@ -5,14 +5,14 @@ sources:
     schema: raw
     tables:
       - name: xkcd_comics
-        description: "Raw XKCD comic data from API"
+        description: "Raw XKCD comic data"
 
 models:
   - name: stg_xkcd_comics
-    description: "Staging model for XKCD comics - normalized from raw JSON"
+    description: "Staging model for XKCD comics from raw JSON"
     columns:
       - name: comic_id
-        description: "Unique identifier for the comic (from API 'num' field)"
+        description: "Unique identifier for the comic"
         tests:
           - unique
           - not_null
@@ -41,23 +41,8 @@ models:
         tests:
           - not_null
       
-      - name: publish_year
-        description: "Publication year"
-        tests:
-          - not_null
-      
-      - name: publish_month
-        description: "Publication month (1-12)"
-        tests:
-          - not_null
-      
-      - name: publish_day
-        description: "Publication day (1-31)"
-        tests:
-          - not_null
-      
       - name: link
-        description: "Optional related link"
+        description: "Optional comic link"
       
       - name: news
         description: "Optional news/announcement text"
@@ -68,6 +53,7 @@ models:
           - not_null
       
       - name: load_id
-        description: "UUID identifier for the batch load"
+        description: "Identifier for the batch load"
         tests:
           - not_null
+
