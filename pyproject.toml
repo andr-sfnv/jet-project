@@ -17,6 +17,8 @@ dependencies = [
     "mypy>=1.11.0",
     "dbt-core>=1.10.15",
     "dbt-postgres>=1.9.1",
+    "sqlfluff>=3.0.0",
+    "sqlfluff-templater-dbt>=3.0.0",
 ]
 
 [build-system]
