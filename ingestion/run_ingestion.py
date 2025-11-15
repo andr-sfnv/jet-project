@@ -8,6 +8,7 @@ import psycopg
 from ingestion.extractor import XKCDExtractor
 from ingestion.loader import XKCDLoader
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -29,11 +30,14 @@ def main():
 
             loader.load_comics(comics)
 
+            logger.info(
+                f"Ingestion complete: Successfully loaded {len(comics)} comics into database"
+            )
+
     except (RuntimeError, psycopg.Error) as e:
-        logger.error(f"Error: {e}", exc_info=True)
+        logger.error(f"Ingestion failed: {e}", exc_info=True)
         sys.exit(1)
 
 
 if __name__ == "__main__":
     main()
-

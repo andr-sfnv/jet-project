@@ -1,8 +1,10 @@
 """Tests for XKCD extractor."""
 
-import pytest
 from unittest.mock import Mock, patch
-from ingestion.extractor import XKCDExtractor, XKCDComic
+
+import pytest
+
+from ingestion.extractor import XKCDComic, XKCDExtractor
 
 
 @pytest.fixture
@@ -67,4 +69,3 @@ def test_context_manager(extractor):
     """Test extractor can be used as context manager."""
     with extractor as ext:
         assert ext is not None
-

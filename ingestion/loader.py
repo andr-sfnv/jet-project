@@ -3,8 +3,7 @@
 import json
 import logging
 import uuid
-from datetime import datetime, timezone
-from typing import List, Optional
+from datetime import UTC, datetime
 
 import psycopg
 from pydantic import Field
@@ -32,10 +31,10 @@ class DatabaseConfig(BaseSettings):
 class XKCDLoader:
     """Load XKCD comic data into PostgreSQL warehouse."""
 
-    def __init__(self, config: Optional[DatabaseConfig] = None):
+    def __init__(self, config: DatabaseConfig | None = None):
         """Initialize loader with database configuration."""
         self.config = config if config is not None else DatabaseConfig()
-        self.conn: Optional[psycopg.Connection] = None
+        self.conn: psycopg.Connection | None = None
 
     def connect(self) -> None:
         """Establish database connection and create tables if needed."""
@@ -81,13 +80,13 @@ class XKCDLoader:
             self.conn = None
             logger.info("Database connection closed")
 
-    def load_comics(self, comics: List[XKCDComic], batch_size: int = 100) -> None:
+    def load_comics(self, comics: list[XKCDComic], batch_size: int = 100) -> None:
         """Load multiple comics in batches."""
         if not self.conn:
             raise RuntimeError("Not connected to database")
 
         load_id = uuid.uuid4()
-        load_ts = datetime.now(timezone.utc)
+        load_ts = datetime.now(UTC)
 
         for i in range(0, len(comics), batch_size):
             batch = comics[i : i + batch_size]

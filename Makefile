@@ -29,11 +29,11 @@ setup:
 		sleep 1; \
 		timeout=$$((timeout-1)); \
 		if [ $$timeout -eq 0 ]; then \
-			echo "❌ Database failed to start"; \
+			echo "Database failed to start"; \
 			exit 1; \
 		fi; \
 	done
-	@echo "✅ Setup complete!"
+	@echo "Setup complete!"
 	@echo ""
 	@echo "Next steps:"
 	@echo "  1. Copy env.template to .env (if not exists)"
@@ -70,8 +70,8 @@ lint-sql:
 	uv run sqlfluff lint dbt/models --dialect postgres
 
 format:
-	uv run black ingestion/
 	uv run ruff format ingestion/
+	uv run ruff check --fix ingestion/
 
 dbt-run:
 	cd dbt && uv run dbt run

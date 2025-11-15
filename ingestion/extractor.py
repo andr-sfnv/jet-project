@@ -1,11 +1,11 @@
 """XKCD API Extractor - Fetches comic data from xkcd.com API."""
 
 import logging
-from typing import Generator, Optional
+from collections.abc import Generator
 
 import requests
 from pydantic import BaseModel, Field
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
 
@@ -42,14 +42,14 @@ class XKCDExtractor:
         retry=retry_if_exception_type((requests.RequestException, requests.Timeout)),
         reraise=True,
     )
-    def fetch_current_comic(self) -> Optional[XKCDComic]:
+    def fetch_current_comic(self) -> XKCDComic | None:
         """Fetch the current/latest comic."""
         url = f"{self.base_url}/info.0.json"
         logger.info(f"Fetching current comic from {url}")
 
         response = self.session.get(url, timeout=self.timeout)
         if response.status_code == 404:
-            logger.warning(f"Comic not found: {url}")
+            logger.warning(f"Current comic not found (404)")
             return None
         response.raise_for_status()
         data = response.json()
@@ -63,14 +63,13 @@ class XKCDExtractor:
         retry=retry_if_exception_type((requests.RequestException, requests.Timeout)),
         reraise=True,
     )
-    def fetch_comic_by_id(self, comic_id: int) -> Optional[XKCDComic]:
+    def fetch_comic_by_id(self, comic_id: int) -> XKCDComic | None:
         """Fetch a specific comic by ID."""
         url = f"{self.base_url}/{comic_id}/info.0.json"
-        logger.info(f"Fetching comic #{comic_id} from {url}")
 
         response = self.session.get(url, timeout=self.timeout)
         if response.status_code == 404:
-            logger.warning(f"Comic #{comic_id} not found")
+            logger.warning(f"Comic #{comic_id} not found (404)")
             return None
         response.raise_for_status()
         data = response.json()

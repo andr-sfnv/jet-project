@@ -3,20 +3,23 @@
 from unittest.mock import Mock, patch
 
 import pytest
+
 from ingestion.extractor import XKCDComic
-from ingestion.loader import XKCDLoader, DatabaseConfig
+from ingestion.loader import DatabaseConfig, XKCDLoader
 
 
 @pytest.fixture
 def mock_config():
     """Mock database configuration."""
-    return DatabaseConfig.model_validate({
-        "WAREHOUSE_HOST": "localhost",
-        "WAREHOUSE_PORT": 5432,
-        "WAREHOUSE_DB": "test_warehouse",
-        "WAREHOUSE_USER": "test_user",
-        "WAREHOUSE_PASSWORD": "test_password",
-    })
+    return DatabaseConfig.model_validate(
+        {
+            "WAREHOUSE_HOST": "localhost",
+            "WAREHOUSE_PORT": 5432,
+            "WAREHOUSE_DB": "test_warehouse",
+            "WAREHOUSE_USER": "test_user",
+            "WAREHOUSE_PASSWORD": "test_password",
+        }
+    )
 
 
 @pytest.fixture
@@ -51,9 +54,10 @@ def test_loader_context_manager(mock_config):
     """Test loader can be used as context manager."""
     loader = XKCDLoader(config=mock_config)
 
-    with patch.object(loader, "connect") as mock_connect, patch.object(
-        loader, "disconnect"
-    ) as mock_disconnect:
+    with (
+        patch.object(loader, "connect") as mock_connect,
+        patch.object(loader, "disconnect") as mock_disconnect,
+    ):
         with loader:
             pass
 
@@ -64,7 +68,7 @@ def test_loader_context_manager(mock_config):
 def test_load_comics_not_connected(mock_config, sample_comic):
     """Test load_comics raises RuntimeError when not connected."""
     loader = XKCDLoader(config=mock_config)
-    
+
     with pytest.raises(RuntimeError, match="Not connected to database"):
         loader.load_comics([sample_comic])
 
@@ -98,7 +102,7 @@ def test_load_comics_multiple_batches(mock_config, sample_comic, mock_connection
 def test_get_existing_comic_ids_not_connected(mock_config):
     """Test get_existing_comic_ids raises RuntimeError when not connected."""
     loader = XKCDLoader(config=mock_config)
-    
+
     with pytest.raises(RuntimeError, match="Not connected to database"):
         loader.get_existing_comic_ids()
 
@@ -114,4 +118,3 @@ def test_get_existing_comic_ids(mock_config, mock_connection):
 
     assert comic_ids == {1, 2, 3}
     mock_cursor.execute.assert_called_once_with("select comic_id from raw.xkcd_comics")
-
