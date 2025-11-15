@@ -11,3 +11,12 @@ xkcd_analytics:
       schema: dev_username
       threads: 4
 
+    airflow:
+      type: postgres
+      host: postgres
+      user: analytics
+      password: analytics
+      port: 5432
+      dbname: warehouse
+      schema: airflow_dev
+      threads: 4
