@@ -8,7 +8,6 @@ __pycache__/
 
 # uv
 .uv/
-uv.lock
 
 # IDE
 .vscode/
@@ -21,6 +20,13 @@ uv.lock
 # Testing
 ingestion/tests/.pytest_cache/
 ingestion/tests/.coverage
+
+# Linting & Type Checking
+.ruff_cache/
+.mypy_cache/
+
+# Logs
+*.log
 
 # dbt
 dbt/target/

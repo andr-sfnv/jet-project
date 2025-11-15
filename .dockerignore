@@ -16,6 +16,13 @@ __pycache__/
 # Testing
 ingestion/tests/
 
+# Linting & Type Checking
+.ruff_cache/
+.mypy_cache/
+
+# Logs
+*.log
+
 # dbt
 dbt/target/
 dbt/dbt_packages/
