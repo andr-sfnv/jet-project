@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: xkcd-postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: analytics
       POSTGRES_PASSWORD: analytics
@@ -13,7 +13,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "analytics"]
+      test: ["CMD", "pg_isready", "-U", "analytics", "-d", "warehouse"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,22 +28,22 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg://analytics:analytics@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     entrypoint: /bin/bash
     command:
       - -c
       - |
-        PGPASSWORD=analytics psql -h postgres -U analytics -d postgres -c "create database if not exists airflow;" || true
-        airflow db init
-        airflow users create --username admin --password admin --role Admin --email admin@example.com || true
+        PGPASSWORD=analytics psql -h postgres -U analytics -d postgres -c "create database airflow;" || true
+        airflow db migrate
+        airflow users create --username admin --firstname Admin --lastname User --password admin --role Admin --email admin@example.com || true
 
   airflow-webserver:
     build:
       context: .
       dockerfile: Dockerfile.airflow
     container_name: xkcd-airflow-webserver
-    restart: always
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -51,7 +51,7 @@ services:
         condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg://analytics:analytics@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
@@ -80,7 +80,7 @@ services:
       context: .
       dockerfile: Dockerfile.airflow
     container_name: xkcd-airflow-scheduler
-    restart: always
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -88,7 +88,7 @@ services:
         condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg://analytics:analytics@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
