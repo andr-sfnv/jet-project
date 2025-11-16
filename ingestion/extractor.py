@@ -49,7 +49,7 @@ class XKCDExtractor:
 
         response = self.session.get(url, timeout=self.timeout)
         if response.status_code == 404:
-            logger.warning(f"Current comic not found (404)")
+            logger.warning("Current comic not found (404)")
             return None
         response.raise_for_status()
         data = response.json()

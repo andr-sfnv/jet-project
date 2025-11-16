@@ -97,4 +97,3 @@ def test_main_handles_runtime_error(sample_comic):
         main()
 
         mock_exit.assert_called_once_with(1)
-
