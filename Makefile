@@ -1,11 +1,11 @@
-.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format format-python
+.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-build airflow-init airflow-up airflow-down airflow-logs
 
 help:
 	@echo "Available commands:"
-	@echo "  make setup          - Install dependencies and start database"
-	@echo "  make start          - Start database container"
-	@echo "  make stop           - Stop database container"
-	@echo "  make logs           - View database logs"
+	@echo "  make setup          - Install dependencies and start all services"
+	@echo "  make start          - Start all containers"
+	@echo "  make stop           - Stop all containers"
+	@echo "  make logs           - View all container logs"
 	@echo "  make ingest         - Run data ingestion"
 	@echo "  make db             - Connect to database"
 	@echo "  make ingestion-test - Run Python ingestion tests"
@@ -16,6 +16,8 @@ help:
 	@echo "  make lint-python    - Lint Python code only"
 	@echo "  make lint-sql       - Lint SQL/dbt code only"
 	@echo "  make format         - Format Python code"
+	@echo "  make airflow-build  - Build Airflow Docker images"
+	@echo "  make airflow-init   - Initialize Airflow database"
 	@echo "  make airflow-up     - Start Airflow services"
 	@echo "  make airflow-down   - Stop Airflow services"
 	@echo "  make airflow-logs   - View Airflow logs"
@@ -24,26 +26,15 @@ help:
 setup:
 	@echo "Installing Python dependencies..."
 	uv pip install -e ".[dev]"
-	@echo "Starting database..."
-	docker compose up -d
-	@echo "Waiting for database to be ready..."
-	@timeout=30; \
-	while ! docker compose exec -T postgres pg_isready -U analytics > /dev/null 2>&1; do \
-		sleep 1; \
-		timeout=$$((timeout-1)); \
-		if [ $$timeout -eq 0 ]; then \
-			echo "Database failed to start"; \
-			exit 1; \
-		fi; \
-	done
+	docker compose up -d postgres
+	docker compose up airflow-init
+	docker compose up -d airflow-webserver airflow-scheduler
 	@echo "Setup complete!"
 	@echo ""
 	@echo "Next steps:"
 	@echo "  1. Copy env.template to .env (if not exists)"
 	@echo "  2. Setup dbt profiles: cp dbt/profiles.yml.example ~/.dbt/profiles.yml"
 	@echo "  3. Update schema in ~/.dbt/profiles.yml (replace dev_username with your username)"
-	@echo "  4. Run: make ingest"
-	@echo "  5. Run: make dbt-build"
 
 start:
 	docker compose up -d
@@ -52,7 +43,7 @@ stop:
 	docker compose down
 
 logs:
-	docker compose logs -f postgres
+	docker compose logs -f
 
 ingest:
 	uv run python -m ingestion.run_ingestion
@@ -67,7 +58,6 @@ lint: lint-python lint-sql
 
 lint-python:
 	uv run ruff check ingestion/
-	uv run mypy ingestion/
 
 lint-sql:
 	uv run sqlfluff lint dbt/models --dialect postgres
@@ -85,7 +75,12 @@ dbt-test:
 dbt-build:
 	cd dbt && uv run dbt build
 
-airflow-up:
+airflow-init:
+	@echo "Initializing Airflow database..."
+	docker compose up airflow-init
+
+airflow-up: airflow-init
+	@echo "Starting Airflow services..."
 	docker compose up -d airflow-webserver airflow-scheduler
 
 airflow-down:
