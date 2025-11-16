@@ -2,8 +2,8 @@
 
 from datetime import datetime, timedelta
 
+from airflow.decorators import dag, task
 from airflow.operators.bash import BashOperator
-from airflow.sdk import dag, task
 
 
 @dag(
@@ -34,12 +34,12 @@ def xkcd_pipeline():
 
     dbt_run_task = BashOperator(
         task_id="dbt_run",
-        bash_command="cd /opt/airflow/dbt && dbt run --target airflow",
+        bash_command="cd /opt/airflow/dbt && dbt run --target airflow --profiles-dir .",
     )
 
     dbt_test_task = BashOperator(
         task_id="dbt_test",
-        bash_command="cd /opt/airflow/dbt && dbt test --target airflow",
+        bash_command="cd /opt/airflow/dbt && dbt test --target airflow --profiles-dir .",
     )
 
     ingest_task = ingest_xkcd_comics()

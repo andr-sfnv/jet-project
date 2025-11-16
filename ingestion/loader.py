@@ -5,7 +5,7 @@ import logging
 import uuid
 from datetime import UTC, datetime
 
-import psycopg
+import psycopg2
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -34,7 +34,7 @@ class XKCDLoader:
     def __init__(self, config: DatabaseConfig | None = None):
         """Initialize loader with database configuration."""
         self.config = config if config is not None else DatabaseConfig()
-        self.conn: psycopg.Connection | None = None
+        self.conn: psycopg2.extensions.connection | None = None
 
     def connect(self) -> None:
         """Establish database connection."""
@@ -43,7 +43,7 @@ class XKCDLoader:
             return
 
         logger.info("Connecting to database")
-        self.conn = psycopg.connect(
+        self.conn = psycopg2.connect(
             host=self.config.warehouse_host,
             port=self.config.warehouse_port,
             dbname=self.config.warehouse_db,
@@ -65,7 +65,7 @@ class XKCDLoader:
         if not self.conn:
             raise RuntimeError("Not connected to database")
 
-        load_id = uuid.uuid4()
+        load_id = str(uuid.uuid4())
         load_ts = datetime.now(UTC)
 
         for i in range(0, len(comics), batch_size):
