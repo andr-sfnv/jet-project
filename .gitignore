@@ -21,9 +21,8 @@ __pycache__/
 ingestion/tests/.pytest_cache/
 ingestion/tests/.coverage
 
-# Linting & Type Checking
+# Linting
 .ruff_cache/
-.mypy_cache/
 
 # Logs
 *.log

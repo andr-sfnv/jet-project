@@ -16,9 +16,8 @@ __pycache__/
 # Testing
 ingestion/tests/
 
-# Linting & Type Checking
+# Linting
 .ruff_cache/
-.mypy_cache/
 
 # Logs
 *.log
