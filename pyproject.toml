@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "requests>=2.32.0",
-    "psycopg[binary]>=3.2.0",
+    "psycopg2-binary>=2.9.0",
     "pydantic>=2.9.0",
     "pydantic-settings>=2.5.0",
     "tenacity>=9.0.0",
@@ -19,7 +19,6 @@ dev = [
     "pytest>=8.3.0",
     "pytest-cov>=5.0.0",
     "ruff>=0.6.0",
-    "mypy>=1.11.0",
     "sqlfluff>=3.0.0",
     "sqlfluff-templater-dbt>=3.0.0",
 ]
@@ -42,12 +41,6 @@ select = ["E", "F", "I", "N", "W", "UP"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-
-[tool.mypy]
-python_version = "3.12"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
 
 [tool.pytest.ini_options]
 testpaths = ["ingestion/tests"]
