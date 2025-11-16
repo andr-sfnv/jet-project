@@ -1,4 +1,4 @@
-.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-build airflow-init airflow-up airflow-down airflow-logs
+.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-init airflow-up airflow-down airflow-logs
 
 help:
 	@echo "Available commands:"
@@ -16,7 +16,6 @@ help:
 	@echo "  make lint-python    - Lint Python code only"
 	@echo "  make lint-sql       - Lint SQL/dbt code only"
 	@echo "  make format         - Format Python code"
-	@echo "  make airflow-build  - Build Airflow Docker images"
 	@echo "  make airflow-init   - Initialize Airflow database"
 	@echo "  make airflow-up     - Start Airflow services"
 	@echo "  make airflow-down   - Stop Airflow services"
@@ -76,11 +75,9 @@ dbt-build:
 	cd dbt && uv run dbt build
 
 airflow-init:
-	@echo "Initializing Airflow database..."
 	docker compose up airflow-init
 
 airflow-up: airflow-init
-	@echo "Starting Airflow services..."
 	docker compose up -d airflow-webserver airflow-scheduler
 
 airflow-down:
@@ -90,8 +87,5 @@ airflow-logs:
 	docker compose logs -f airflow-webserver airflow-scheduler
 
 clean:
-	@echo "Stopping containers and removing volumes..."
 	docker compose down -v
-	@echo "Clearing Airflow log files..."
 	rm -rf airflow/logs/dag_id=* airflow/logs/dag_processor airflow/logs/dag_processor_manager airflow/logs/scheduler
-	@echo "Clean complete!"
