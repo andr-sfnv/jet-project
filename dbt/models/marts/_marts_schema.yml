@@ -41,7 +41,7 @@ models:
         description: "Length of title (for cost calculation: length * €5)"
 
   - name: fct_comic_metrics
-    description: "Fact table with calculated metrics: views, cost_euros, customer_review_score"
+    description: "Fact table with calculated metrics: view_count, cost_euros, customer_review_score"
     columns:
       - name: comic_id
         description: "Primary key and foreign key to dim_comic"
@@ -53,7 +53,7 @@ models:
                 to: ref('dim_comic')
                 field: comic_id
       
-      - name: views
+      - name: view_count
         description: "Number of views per comic"
         tests:
           - not_null
