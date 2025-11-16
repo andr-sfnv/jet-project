@@ -1,4 +1,4 @@
-.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-init airflow-up airflow-down airflow-logs
+.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format
 
 help:
 	@echo "Available commands:"
@@ -16,10 +16,6 @@ help:
 	@echo "  make lint-python    - Lint Python code only"
 	@echo "  make lint-sql       - Lint SQL/dbt code only"
 	@echo "  make format         - Format Python code"
-	@echo "  make airflow-init   - Initialize Airflow database"
-	@echo "  make airflow-up     - Start Airflow services"
-	@echo "  make airflow-down   - Stop Airflow services"
-	@echo "  make airflow-logs   - View Airflow logs"
 	@echo "  make clean          - Stop containers, remove volumes, and clear logs"
 
 setup:
@@ -31,9 +27,9 @@ setup:
 	@echo "Setup complete!"
 	@echo ""
 	@echo "Next steps:"
-	@echo "  1. Copy env.template to .env (if not exists)"
-	@echo "  2. Setup dbt profiles: cp dbt/profiles.yml.example ~/.dbt/profiles.yml"
-	@echo "  3. Update schema in ~/.dbt/profiles.yml (replace dev_username with your username)"
+	@echo "1. Copy env.template to .env (if not exists)"
+	@echo "2. Setup dbt profiles: cp dbt/profiles.yml.example ~/.dbt/profiles.yml"
+	@echo "3. Update schema in ~/.dbt/profiles.yml (replace dev_username with your username)"
 
 start:
 	docker compose up -d
@@ -73,18 +69,6 @@ dbt-test:
 
 dbt-build:
 	cd dbt && uv run dbt build
-
-airflow-init:
-	docker compose up airflow-init
-
-airflow-up: airflow-init
-	docker compose up -d airflow-webserver airflow-scheduler
-
-airflow-down:
-	docker compose stop airflow-webserver airflow-scheduler
-
-airflow-logs:
-	docker compose logs -f airflow-webserver airflow-scheduler
 
 clean:
 	docker compose down -v
