@@ -13,6 +13,7 @@ from airflow.operators.bash import BashOperator
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["xkcd"],
+    is_paused_upon_creation=False,
     default_args={
         "owner": "data-engineering",
         "depends_on_past": False,
