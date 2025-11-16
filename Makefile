@@ -21,7 +21,7 @@ help:
 	@echo "  make airflow-up     - Start Airflow services"
 	@echo "  make airflow-down   - Stop Airflow services"
 	@echo "  make airflow-logs   - View Airflow logs"
-	@echo "  make clean          - Stop and remove database volumes"
+	@echo "  make clean          - Stop containers, remove volumes, and clear logs"
 
 setup:
 	@echo "Installing Python dependencies..."
@@ -90,4 +90,8 @@ airflow-logs:
 	docker compose logs -f airflow-webserver airflow-scheduler
 
 clean:
+	@echo "Stopping containers and removing volumes..."
 	docker compose down -v
+	@echo "Clearing Airflow log files..."
+	rm -rf airflow/logs/dag_id=* airflow/logs/dag_processor airflow/logs/dag_processor_manager airflow/logs/scheduler
+	@echo "Clean complete!"
