@@ -2,6 +2,7 @@
 
 import logging
 from collections.abc import Generator
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 from pydantic import BaseModel, Field
@@ -77,43 +78,38 @@ class XKCDExtractor:
         logger.info(f"Successfully fetched comic #{comic.num}: {comic.title}")
         return comic
 
-    def fetch_comic_range(
-        self, start_id: int, end_id: int, skip_missing: bool = True
+    def fetch_comics(
+        self, existing_ids: set[int], max_workers: int = 10
     ) -> Generator[XKCDComic, None, None]:
-        """Fetch a range of comics."""
-        logger.info(f"Fetching comics from #{start_id} to #{end_id}")
-
-        for comic_id in range(start_id, end_id + 1):
-            try:
-                comic = self.fetch_comic_by_id(comic_id)
-                if comic is not None:
-                    yield comic
-                elif not skip_missing:
-                    raise ValueError(f"Comic #{comic_id} not found")
-            except requests.RequestException as e:
-                logger.error(f"Failed to fetch comic #{comic_id}: {e}")
-                if not skip_missing:
-                    raise
-
-    def fetch_missing_comics(self, existing_ids: set[int]) -> Generator[XKCDComic, None, None]:
-        """Fetch comics that are missing from the existing set."""
-        # Get current comic to determine max ID
+        """Fetch comics using parallel requests."""
         current = self.fetch_current_comic()
         if current is None:
-            logger.warning("Could not fetch current comic, cannot determine missing comics")
+            logger.warning("Could not fetch current comic, cannot determine comics to fetch")
             return
 
         max_id = current.num
-        logger.info(f"Checking for missing comics up to #{max_id}")
+        missing_ids = [comic_id for comic_id in range(1, max_id + 1) if comic_id not in existing_ids]
 
-        for comic_id in range(1, max_id + 1):
-            if comic_id not in existing_ids:
+        if not missing_ids:
+            logger.info("No new comics to fetch")
+            return
+
+        logger.info(f"Fetching {len(missing_ids)} comics")
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_id = {
+                executor.submit(self.fetch_comic_by_id, comic_id): comic_id
+                for comic_id in missing_ids
+            }
+
+            for future in as_completed(future_to_id):
+                comic_id = future_to_id[future]
                 try:
-                    comic = self.fetch_comic_by_id(comic_id)
+                    comic = future.result()
                     if comic is not None:
                         yield comic
                 except requests.RequestException as e:
-                    logger.error(f"Failed to fetch missing comic #{comic_id}: {e}")
+                    logger.error(f"Failed to fetch comic #{comic_id}: {e}")
                     continue
 
     def __enter__(self) -> "XKCDExtractor":

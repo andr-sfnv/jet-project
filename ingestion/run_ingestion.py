@@ -20,7 +20,7 @@ def main():
         with XKCDExtractor() as extractor, XKCDLoader() as loader:
             existing_ids = loader.get_existing_comic_ids()
 
-            comics = list(extractor.fetch_missing_comics(existing_ids))
+            comics = list(extractor.fetch_comics(existing_ids))
 
             if not comics:
                 logger.info("No new comics - database is up to date")

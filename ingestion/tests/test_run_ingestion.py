@@ -40,14 +40,14 @@ def test_main_no_new_comics(sample_comic):
         mock_loader_class.return_value.__exit__ = Mock(return_value=None)
 
         mock_loader.get_existing_comic_ids.return_value = {1, 2, 3}
-        mock_extractor.fetch_missing_comics.return_value = []
+        mock_extractor.fetch_comics.return_value = []
 
         from ingestion.run_ingestion import main
 
         main()
 
         mock_loader.get_existing_comic_ids.assert_called_once()
-        mock_extractor.fetch_missing_comics.assert_called_once_with({1, 2, 3})
+        mock_extractor.fetch_comics.assert_called_once_with({1, 2, 3})
         mock_loader.load_comics.assert_not_called()
 
 
@@ -65,14 +65,14 @@ def test_main_with_new_comics(sample_comic):
         mock_loader_class.return_value.__exit__ = Mock(return_value=None)
 
         mock_loader.get_existing_comic_ids.return_value = {1, 2}
-        mock_extractor.fetch_missing_comics.return_value = [sample_comic]
+        mock_extractor.fetch_comics.return_value = [sample_comic]
 
         from ingestion.run_ingestion import main
 
         main()
 
         mock_loader.get_existing_comic_ids.assert_called_once()
-        mock_extractor.fetch_missing_comics.assert_called_once_with({1, 2})
+        mock_extractor.fetch_comics.assert_called_once_with({1, 2})
         mock_loader.load_comics.assert_called_once_with([sample_comic])
 
 
