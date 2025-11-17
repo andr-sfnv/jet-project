@@ -18,7 +18,7 @@ XKCD API → Python Ingestion → PostgreSQL → dbt (staging/marts) → Analyti
 
 ## Prerequisites
 
-- **Docker**
+- **Docker Desktop**
 - **Python 3.12+**
 - **uv**
 
@@ -27,6 +27,10 @@ XKCD API → Python Ingestion → PostgreSQL → dbt (staging/marts) → Analyti
 ### 1. Setup environment
 
 ```bash
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate
+
 # Copy environment template
 cp env.template .env
 
