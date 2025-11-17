@@ -1,8 +1,10 @@
 -- Initialize warehouse database and schemas
 
 create schema if not exists raw;
+create schema if not exists airflow_dev_staging;
+create schema if not exists airflow_dev_marts;
 
--- Create raw table for XKCD comics
+
 create table if not exists raw.xkcd_comics (
     comic_id integer primary key,
     raw_json jsonb not null,
