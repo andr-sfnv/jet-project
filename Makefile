@@ -1,4 +1,4 @@
-.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-trigger
+.PHONY: help setup start stop logs ingest db ingest-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-trigger
 
 help:
 	@echo "Available commands:"
