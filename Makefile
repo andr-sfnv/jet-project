@@ -1,4 +1,4 @@
-.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format
+.PHONY: help setup start stop logs ingest db ingestion-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-trigger
 
 help:
 	@echo "Available commands:"
@@ -17,6 +17,7 @@ help:
 	@echo "  make lint-sql       - Lint SQL/dbt code only"
 	@echo "  make format         - Format Python code"
 	@echo "  make clean          - Stop containers, remove volumes, and clear logs"
+	@echo "  make airflow-trigger - Trigger xkcd_pipeline DAG manually"
 
 setup:
 	@echo "Installing Python dependencies..."
@@ -73,3 +74,6 @@ dbt-build:
 clean:
 	docker compose down -v
 	rm -rf airflow/logs/dag_id=* airflow/logs/dag_processor airflow/logs/dag_processor_manager airflow/logs/scheduler
+
+airflow-trigger:
+	docker compose exec airflow-webserver airflow dags trigger xkcd_pipeline

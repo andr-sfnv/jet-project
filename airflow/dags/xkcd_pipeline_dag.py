@@ -55,7 +55,7 @@ def xkcd_pipeline():
 
     skip_sensor_task = EmptyOperator(task_id="skip_sensor")
 
-    @task()
+    @task(trigger_rule="none_failed_or_skipped")
     def ingest_xkcd_comics():
         """Run XKCD ingestion."""
         from ingestion.run_ingestion import main
@@ -65,11 +65,13 @@ def xkcd_pipeline():
     dbt_run_task = BashOperator(
         task_id="dbt_run",
         bash_command="cd /opt/airflow/dbt && dbt run --target airflow --profiles-dir .",
+        trigger_rule="none_failed_or_skipped",
     )
 
     dbt_test_task = BashOperator(
         task_id="dbt_test",
         bash_command="cd /opt/airflow/dbt && dbt test --target airflow --profiles-dir .",
+        trigger_rule="none_failed_or_skipped",
     )
 
     ingest_task = ingest_xkcd_comics()
