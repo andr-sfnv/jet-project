@@ -42,6 +42,8 @@ models:
 
   - name: fct_comic_metrics
     description: "Fact table with calculated metrics: view_count, cost_euros, customer_review_score"
+    +indexes:
+      - columns: [comic_id]
     columns:
       - name: comic_id
         description: "Primary key and foreign key to dim_comic"

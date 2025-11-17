@@ -87,9 +87,8 @@ class XKCDLoader:
                     insert into raw.xkcd_comics (comic_id, raw_json, load_ts, load_id)
                     values (%s, %s, %s, %s)
                     on conflict (comic_id) do update
-                    set raw_json = excluded.raw_json,
-                        load_ts = excluded.load_ts,
-                        load_id = excluded.load_id
+                    set raw_json = excluded.raw_json
+                    where raw.xkcd_comics.load_ts < excluded.load_ts
                     """,
                     batch_data,
                 )

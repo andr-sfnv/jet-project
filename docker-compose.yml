@@ -38,7 +38,7 @@ services:
       - |
         psql -h postgres -U analytics -d postgres -c "create database airflow;" || true
         airflow db migrate
-        airflow users create --username admin --firstname Admin --lastname User --password $${AIRFLOW_ADMIN_PASSWORD} --role Admin --email admin@example.com || true
+        airflow users create --username admin --firstname Admin --lastname User --password ${AIRFLOW_ADMIN_PASSWORD} --role Admin --email admin@example.com || true
 
   airflow-webserver:
     build:

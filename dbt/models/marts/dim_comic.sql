@@ -21,7 +21,7 @@ final as (
         transcript,
         link,
         publish_date,
-        length(title) as title_length
+        char_length(title) as title_length
     from staging
 )
 

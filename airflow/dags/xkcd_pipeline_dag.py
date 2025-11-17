@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 
 from airflow.decorators import dag, task
+from airflow.utils.dates import days_ago
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 from airflow.sensors.python import PythonSensor
@@ -15,7 +16,7 @@ SENSOR_POKE_INTERVAL_SECONDS = 300  # 5 minutes
     dag_id="xkcd_pipeline",
     description="XKCD comics pipeline",
     schedule="0 12 * * 1,3,5",
-    start_date=datetime(2025, 1, 1),
+    start_date=days_ago(1),
     catchup=False,
     tags=["xkcd"],
     is_paused_upon_creation=True,
