@@ -26,8 +26,8 @@ setup:
 	@echo ""
 	@echo "Next steps:"
 	@echo "1. Copy env.template to .env (if not exists)"
-	@echo "2. Setup dbt profiles: cp dbt/profiles.yml.example ~/.dbt/profiles.yml"
-	@echo "3. Update schema in ~/.dbt/profiles.yml (replace dev_username with your username)"
+	@echo "2. Setup dbt profiles: mkdir -p ~/.dbt && cp dbt/profiles.yml ~/.dbt/profiles.yml"
+	@echo "3. Update ~/.dbt/profiles.yml: replace 'dev_username' with your username and 'CHANGE_ME' with your password"
 
 start:
 	docker compose up -d postgres airflow-webserver airflow-scheduler
@@ -60,13 +60,13 @@ format:
 	uv run ruff check --fix ingestion/
 
 dbt-run:
-	cd dbt && uv run dbt run
+	cd dbt && uv run dbt run --profiles-dir ~/.dbt
 
 dbt-test:
-	cd dbt && uv run dbt test
+	cd dbt && uv run dbt test --profiles-dir ~/.dbt
 
 dbt-build:
-	cd dbt && uv run dbt build
+	cd dbt && uv run dbt build --profiles-dir ~/.dbt
 
 clean:
 	docker compose down -v

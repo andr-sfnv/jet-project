@@ -19,13 +19,14 @@ class DatabaseConfig(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=".env",
+        extra="ignore",
     )
 
     warehouse_host: str = Field(default="localhost", alias="WAREHOUSE_HOST")
     warehouse_port: int = Field(default=5432, alias="WAREHOUSE_PORT")
     warehouse_db: str = Field(default="warehouse", alias="WAREHOUSE_DB")
     warehouse_user: str = Field(default="analytics", alias="WAREHOUSE_USER")
-    warehouse_password: str = Field(default="analytics", alias="WAREHOUSE_PASSWORD")
+    warehouse_password: str = Field(alias="WAREHOUSE_PASSWORD")
 
 
 class XKCDLoader:

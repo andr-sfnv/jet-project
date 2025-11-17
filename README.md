@@ -31,9 +31,11 @@ XKCD API → Python Ingestion → PostgreSQL → dbt (staging/marts) → Analyti
 cp env.template .env
 
 # Setup dbt profiles
+# Copy dbt/profiles.yml to ~/.dbt/profiles.yml and update with your credentials
 mkdir -p ~/.dbt
-cp dbt/profiles.yml.example ~/.dbt/profiles.yml
-# Edit ~/.dbt/profiles.yml and replace 'dev_username' with your username
+cp dbt/profiles.yml ~/.dbt/profiles.yml
+# Edit ~/.dbt/profiles.yml: replace 'dev_username' with your username and 'CHANGE_ME' with your password
+
 ```
 
 ### 2. Review functionality, install and start
@@ -53,15 +55,6 @@ make ingest
 # Run dbt models and tests
 make dbt-build
 ```
-
-### 4. Access Airflow UI
-
-```bash
-# Access at http://localhost:8080
-# Username: admin, Password: admin
-```
-
-The pipeline DAG (`xkcd_pipeline`) runs on schedule (Mon/Wed/Fri at 12:00 PM) or can be triggered manually.
 
 ## Data Model
 

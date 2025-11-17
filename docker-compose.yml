@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: analytics
-      POSTGRES_PASSWORD: analytics
+      POSTGRES_PASSWORD: ${WAREHOUSE_PASSWORD}
       POSTGRES_DB: warehouse
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -28,15 +28,17 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:${WAREHOUSE_PASSWORD}@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW_ADMIN_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD}
+      PGPASSWORD: ${WAREHOUSE_PASSWORD}
     entrypoint: /bin/bash
     command:
       - -c
       - |
-        PGPASSWORD=analytics psql -h postgres -U analytics -d postgres -c "create database airflow;" || true
+        psql -h postgres -U analytics -d postgres -c "create database airflow;" || true
         airflow db migrate
-        airflow users create --username admin --firstname Admin --lastname User --password admin --role Admin --email admin@example.com || true
+        airflow users create --username admin --firstname Admin --lastname User --password $${AIRFLOW_ADMIN_PASSWORD} --role Admin --email admin@example.com || true
 
   airflow-webserver:
     build:
@@ -49,7 +51,7 @@ services:
         condition: service_healthy
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:${WAREHOUSE_PASSWORD}@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
@@ -57,13 +59,14 @@ services:
       WAREHOUSE_PORT: 5432
       WAREHOUSE_DB: warehouse
       WAREHOUSE_USER: analytics
-      WAREHOUSE_PASSWORD: analytics
+      WAREHOUSE_PASSWORD: ${WAREHOUSE_PASSWORD}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./ingestion:/opt/airflow/ingestion
       - ./dbt:/opt/airflow/dbt
+      - ~/.dbt:/home/airflow/.dbt:ro
     ports:
       - "8080:8080"
     command: webserver
@@ -84,7 +87,7 @@ services:
         condition: service_healthy
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:${WAREHOUSE_PASSWORD}@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
@@ -92,13 +95,14 @@ services:
       WAREHOUSE_PORT: 5432
       WAREHOUSE_DB: warehouse
       WAREHOUSE_USER: analytics
-      WAREHOUSE_PASSWORD: analytics
+      WAREHOUSE_PASSWORD: ${WAREHOUSE_PASSWORD}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./ingestion:/opt/airflow/ingestion
       - ./dbt:/opt/airflow/dbt
+      - ~/.dbt:/home/airflow/.dbt:ro
     command: scheduler
 
 volumes:

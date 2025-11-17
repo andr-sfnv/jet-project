@@ -5,7 +5,7 @@ xkcd_analytics:
       type: postgres
       host: localhost
       user: analytics
-      password: analytics
+      password: CHANGE_ME
       port: 5432
       dbname: warehouse
       schema: dev_username
@@ -15,7 +15,7 @@ xkcd_analytics:
       type: postgres
       host: postgres
       user: analytics
-      password: analytics
+      password: CHANGE_ME
       port: 5432
       dbname: warehouse
       schema: airflow_dev

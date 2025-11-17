@@ -64,13 +64,13 @@ def xkcd_pipeline():
 
     dbt_run_task = BashOperator(
         task_id="dbt_run",
-        bash_command="cd /opt/airflow/dbt && dbt run --target airflow --profiles-dir .",
+        bash_command="cd /opt/airflow/dbt && dbt run --target airflow --profiles-dir /home/airflow/.dbt",
         trigger_rule="none_failed_or_skipped",
     )
 
     dbt_test_task = BashOperator(
         task_id="dbt_test",
-        bash_command="cd /opt/airflow/dbt && dbt test --target airflow --profiles-dir .",
+        bash_command="cd /opt/airflow/dbt && dbt test --target airflow --profiles-dir /home/airflow/.dbt",
         trigger_rule="none_failed_or_skipped",
     )
 
