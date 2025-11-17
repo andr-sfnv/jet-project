@@ -37,6 +37,7 @@ cp env.template .env
 # Setup dbt profiles
 # Copy dbt/profiles.yml to ~/.dbt/profiles.yml and update with your credentials
 mkdir -p ~/.dbt
+# Do this if you don't already have profiles.yml
 cp dbt/profiles.yml ~/.dbt/profiles.yml
 # Edit ~/.dbt/profiles.yml: replace 'dev_username' with your username and 'CHANGE_ME' with your password
 
