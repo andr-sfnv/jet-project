@@ -17,6 +17,5 @@ COPY --chown=airflow:root pyproject.toml uv.lock README.md ./
 COPY --chown=airflow:root ingestion/ ./ingestion/
 COPY --chown=airflow:root dbt/ ./dbt/
 
-RUN --mount=type=cache,target=/home/airflow/.cache/uv \
-    uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --no-cache
 
