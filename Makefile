@@ -24,10 +24,7 @@ setup:
 	docker compose up -d
 	@echo "Setup complete!"
 	@echo ""
-	@echo "Next steps:"
-	@echo "1. Copy env.template to .env (if not exists)"
-	@echo "2. Setup dbt profiles: mkdir -p ~/.dbt && cp dbt/profiles.yml ~/.dbt/profiles.yml"
-	@echo "3. Update ~/.dbt/profiles.yml: replace 'dev_username' with your username and 'CHANGE_ME' with your password"
+	@echo Check README.md for inital setup if not done already
 
 start:
 	docker compose up -d postgres airflow-webserver airflow-scheduler
