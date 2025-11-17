@@ -18,7 +18,7 @@ SENSOR_POKE_INTERVAL_SECONDS = 300  # 5 minutes
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["xkcd"],
-    is_paused_upon_creation=False,
+    is_paused_upon_creation=True,
     default_args={
         "owner": "data-engineering",
         "depends_on_past": False,
