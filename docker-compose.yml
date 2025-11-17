@@ -47,8 +47,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      airflow-init:
-        condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow
@@ -84,8 +82,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      airflow-init:
-        condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:analytics@postgres:5432/airflow

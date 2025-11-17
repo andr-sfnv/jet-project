@@ -6,9 +6,9 @@ help:
 	@echo "  make start          - Start all containers"
 	@echo "  make stop           - Stop all containers"
 	@echo "  make logs           - View all container logs"
-	@echo "  make ingest         - Run data ingestion"
 	@echo "  make db             - Connect to database"
-	@echo "  make ingestion-test - Run Python ingestion tests"
+	@echo "  make ingest         - Run data ingestion"
+	@echo "  make ingest-test    - Run Python ingestion tests"
 	@echo "  make dbt-run        - Run dbt models"
 	@echo "  make dbt-test       - Run dbt tests"
 	@echo "  make dbt-build      - Run dbt models and tests"
@@ -22,9 +22,7 @@ help:
 setup:
 	@echo "Installing Python dependencies..."
 	uv pip install -e ".[dev]"
-	docker compose up -d postgres
-	docker compose up airflow-init
-	docker compose up -d airflow-webserver airflow-scheduler
+	docker compose up -d
 	@echo "Setup complete!"
 	@echo ""
 	@echo "Next steps:"
@@ -33,7 +31,7 @@ setup:
 	@echo "3. Update schema in ~/.dbt/profiles.yml (replace dev_username with your username)"
 
 start:
-	docker compose up -d
+	docker compose up -d postgres airflow-webserver airflow-scheduler
 
 stop:
 	docker compose down
@@ -41,13 +39,13 @@ stop:
 logs:
 	docker compose logs -f
 
-ingest:
-	uv run python -m ingestion.run_ingestion
-
 db:
 	docker compose exec postgres psql -U analytics -d warehouse
 
-ingestion-test:
+ingest:
+	uv run python -m ingestion.run_ingestion
+
+ingest-test:
 	uv run pytest ingestion/tests/ -v
 
 lint: lint-python lint-sql
