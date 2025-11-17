@@ -1,4 +1,4 @@
--- Initialize warehouse database and schemas
+-- Initialise warehouse database and schemas
 
 create schema if not exists raw;
 create schema if not exists airflow_dev_staging;

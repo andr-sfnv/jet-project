@@ -54,4 +54,3 @@ def should_skip_sensor(**context) -> str:
         return "skip_sensor"
 
     return "wait_for_new_comic"
-

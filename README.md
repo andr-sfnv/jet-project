@@ -1,6 +1,6 @@
 # XKCD Data Platform
 
-A data engineering project for ingesting, transforming, and analyzing XKCD comic data using Python, PostgreSQL, dbt and Airflow.
+A data engineering project for ingesting, transforming, and analysing XKCD comic data using Python, PostgreSQL, dbt and Airflow.
 
 
 ## Architecture
@@ -12,7 +12,7 @@ XKCD API → Python Ingestion → PostgreSQL → dbt (staging/marts) → Analyti
 ```
 
 - **Raw Layer**: Stores raw JSON responses from XKCD API
-- **Staging Layer**: Parses and normalizes JSON into typed columns
+- **Staging Layer**: Parses and normalises JSON into typed columns
 - **Marts Layer**: Kimball star schema with dimension and fact tables
 - **Orchestration**: Apache Airflow schedules and monitors the pipeline (Mon/Wed/Fri at 12:00 PM)
 

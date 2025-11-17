@@ -130,4 +130,3 @@ def test_should_skip_sensor_when_scheduled():
     result = should_skip_sensor(**context)
 
     assert result == "wait_for_new_comic"
-

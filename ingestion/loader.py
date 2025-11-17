@@ -32,7 +32,7 @@ class XKCDLoader:
     """Load XKCD comic data into PostgreSQL warehouse."""
 
     def __init__(self, config: DatabaseConfig | None = None):
-        """Initialize loader with database configuration."""
+        """Initialise loader with database configuration."""
         self.config = config if config is not None else DatabaseConfig()
         self.conn: psycopg2.extensions.connection | None = None
 

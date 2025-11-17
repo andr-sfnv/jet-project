@@ -31,7 +31,7 @@ class XKCDExtractor:
     """Extract comic data from XKCD API."""
 
     def __init__(self, base_url: str = "https://xkcd.com", timeout: int = 30):
-        """Initialize XKCD extractor."""
+        """Initialise XKCD extractor."""
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.session = requests.Session()
@@ -88,7 +88,9 @@ class XKCDExtractor:
             return
 
         max_id = current.num
-        missing_ids = [comic_id for comic_id in range(1, max_id + 1) if comic_id not in existing_ids]
+        missing_ids = [
+            comic_id for comic_id in range(1, max_id + 1) if comic_id not in existing_ids
+        ]
 
         if not missing_ids:
             logger.info("No new comics to fetch")
