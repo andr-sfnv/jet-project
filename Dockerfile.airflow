@@ -14,10 +14,10 @@ USER airflow
 WORKDIR /opt/airflow
 
 COPY --chown=airflow:root pyproject.toml uv.lock README.md ./
+RUN uv sync --frozen --no-dev --no-cache
+
 COPY --chown=airflow:root ingestion/ ./ingestion/
 COPY --chown=airflow:root dbt/ ./dbt/
 
-RUN uv sync --frozen --no-dev --no-cache
-
-ENV PATH="/opt/airflow/.venv/bin:${PATH}"
-ENV PYTHONPATH="/home/airflow/.local/lib/python3.12/site-packages:${PYTHONPATH}"
+ENV PATH="/opt/airflow/.venv/bin:${PATH}" \
+    PYTHONPATH="/opt/airflow/.venv/lib/python3.12/site-packages:/home/airflow/.local/lib/python3.12/site-packages"

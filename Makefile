@@ -1,8 +1,9 @@
-.PHONY: help setup start stop logs ingest db ingest-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-trigger
+.PHONY: help setup start stop logs ingest db ingest-test clean dbt-run dbt-test dbt-build lint lint-python lint-sql format airflow-trigger build
 
 help:
 	@echo "Available commands:"
 	@echo "  make setup            - Install dependencies and start all services"
+	@echo "  make build            - Rebuild Docker images"
 	@echo "  make start            - Start all containers"
 	@echo "  make stop             - Stop all containers"
 	@echo "  make logs             - View all container logs"
@@ -25,6 +26,9 @@ setup:
 	@echo "Setup complete!"
 	@echo ""
 	@echo Check README.md for inital setup if not done already
+
+build:
+	docker compose build --no-cache airflow-webserver airflow-scheduler airflow-init
 
 start:
 	docker compose up -d postgres airflow-webserver airflow-scheduler

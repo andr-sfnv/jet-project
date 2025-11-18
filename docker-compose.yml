@@ -3,6 +3,12 @@ services:
     image: postgres:16-alpine
     container_name: xkcd-postgres
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
     environment:
       POSTGRES_USER: analytics
       POSTGRES_PASSWORD: ${WAREHOUSE_PASSWORD}
@@ -57,8 +63,18 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: 2
+      AIRFLOW__CORE__DAG_CONCURRENCY: 1
+      AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: 1
+      AIRFLOW__WEBSERVER__WORKERS: 2
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:${WAREHOUSE_PASSWORD}@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
@@ -103,8 +119,17 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: 2
+      AIRFLOW__CORE__DAG_CONCURRENCY: 1
+      AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: 1
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://analytics:${WAREHOUSE_PASSWORD}@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
