@@ -24,7 +24,7 @@ def check_new_comic_available() -> bool:
 
         with XKCDLoader() as loader:
             existing_ids = loader.get_existing_comic_ids()
-            max_existing_id = max(existing_ids) if existing_ids else 0
+            max_existing_id = max(existing_ids, default=0)
             logger.info(f"Max existing comic ID in database: {max_existing_id}")
 
             new_comic_available = current_id > max_existing_id
