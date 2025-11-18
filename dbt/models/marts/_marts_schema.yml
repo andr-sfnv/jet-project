@@ -3,6 +3,8 @@ version: 2
 models:
   - name: dim_comic
     description: "Comic dimension table with title length for cost calculation"
+    +indexes:
+      - columns: [publish_date]
     columns:
       - name: comic_id
         description: "Unique comic id"
