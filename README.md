@@ -39,7 +39,7 @@ cp env.template .env
 mkdir -p ~/.dbt
 # Do this if you don't already have profiles.yml
 cp dbt/profiles.yml ~/.dbt/profiles.yml
-# Edit ~/.dbt/profiles.yml: replace 'dev_username' with your username and 'CHANGE_ME' with your password
+# Edit ~/.dbt/profiles.yml: replace 'dev_username' with your username and 'CHANGE_ME' with your password (string)
 
 ```
 
