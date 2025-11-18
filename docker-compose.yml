@@ -22,6 +22,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.airflow
+      platforms:
+        - linux/arm64
+    platform: linux/arm64
     container_name: xkcd-airflow-init
     restart: "no"
     depends_on:
@@ -36,14 +39,19 @@ services:
     command:
       - -c
       - |
+        export PATH="/opt/airflow/.venv/bin:${PATH}"
+        export PYTHONPATH="/home/airflow/.local/lib/python3.12/site-packages:${PYTHONPATH}"
         psql -h postgres -U analytics -d postgres -c "create database airflow;" || true
-        airflow db migrate
-        airflow users create --username admin --firstname Admin --lastname User --password ${AIRFLOW_ADMIN_PASSWORD} --role Admin --email admin@example.com || true
+        /opt/airflow/.venv/bin/python -m airflow db migrate
+        /opt/airflow/.venv/bin/python -m airflow users create --username admin --firstname Admin --lastname User --password ${AIRFLOW_ADMIN_PASSWORD} --role Admin --email admin@example.com || true
 
   airflow-webserver:
     build:
       context: .
       dockerfile: Dockerfile.airflow
+      platforms:
+        - linux/arm64
+    platform: linux/arm64
     container_name: xkcd-airflow-webserver
     restart: unless-stopped
     depends_on:
@@ -60,6 +68,8 @@ services:
       WAREHOUSE_DB: warehouse
       WAREHOUSE_USER: analytics
       WAREHOUSE_PASSWORD: ${WAREHOUSE_PASSWORD}
+      PATH: /opt/airflow/.venv/bin:/root/bin:/home/airflow/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONPATH: /home/airflow/.local/lib/python3.12/site-packages
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -69,7 +79,14 @@ services:
       - ~/.dbt:/home/airflow/.dbt:ro
     ports:
       - "8080:8080"
-    command: webserver
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        export PATH="/opt/airflow/.venv/bin:${PATH}"
+        export PYTHONPATH="/home/airflow/.local/lib/python3.12/site-packages:${PYTHONPATH}"
+        /opt/airflow/.venv/bin/python -m airflow db check
+        exec /opt/airflow/.venv/bin/python -m airflow webserver
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
@@ -80,6 +97,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.airflow
+      platforms:
+        - linux/arm64
+    platform: linux/arm64
     container_name: xkcd-airflow-scheduler
     restart: unless-stopped
     depends_on:
@@ -96,6 +116,8 @@ services:
       WAREHOUSE_DB: warehouse
       WAREHOUSE_USER: analytics
       WAREHOUSE_PASSWORD: ${WAREHOUSE_PASSWORD}
+      PATH: /opt/airflow/.venv/bin:/root/bin:/home/airflow/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONPATH: /home/airflow/.local/lib/python3.12/site-packages
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -103,7 +125,13 @@ services:
       - ./ingestion:/opt/airflow/ingestion
       - ./dbt:/opt/airflow/dbt
       - ~/.dbt:/home/airflow/.dbt:ro
-    command: scheduler
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        export PATH="/opt/airflow/.venv/bin:${PATH}"
+        export PYTHONPATH="/home/airflow/.local/lib/python3.12/site-packages:${PYTHONPATH}"
+        exec /opt/airflow/.venv/bin/python -m airflow scheduler
 
 volumes:
   postgres-data:

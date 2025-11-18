@@ -1,4 +1,4 @@
-FROM apache/airflow:2.10.2-python3.12
+FROM --platform=linux/arm64 apache/airflow:2.10.2-python3.12
 
 USER root
 
@@ -19,3 +19,9 @@ COPY --chown=airflow:root dbt/ ./dbt/
 
 RUN uv sync --frozen --no-dev --no-cache
 
+USER root
+RUN chmod +x /opt/airflow/.venv/bin/python* || true
+USER airflow
+
+ENV PATH="/opt/airflow/.venv/bin:${PATH}"
+ENV PYTHONPATH="/home/airflow/.local/lib/python3.12/site-packages:${PYTHONPATH}"
