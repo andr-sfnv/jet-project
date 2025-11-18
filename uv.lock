@@ -1377,7 +1377,7 @@ dev = [
 requires-dist = [
     { name = "dbt-core", specifier = ">=1.10.15" },
     { name = "dbt-postgres", specifier = ">=1.9.1" },
-    { name = "protobuf", specifier = ">=6.0.0" },
+    { name = "protobuf", specifier = ">=6.0.0,<7.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.0" },
     { name = "pydantic", specifier = ">=2.9.0" },
     { name = "pydantic-settings", specifier = ">=2.5.0" },
